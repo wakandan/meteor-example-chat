@@ -1,0 +1,30 @@
+<head>
+  <title>chat</title>
+</head>
+
+<body>
+  {{> hello}}
+  <div>
+	  {{> form }}
+  </div>
+  <div>
+	  {{> messages}}
+  </div>
+</body>
+
+<template name="hello">
+  <h1>This is my first Meteor Application!</h1>
+</template>
+
+<template name="form">
+	<form name='chat_form'>
+	<input type="text" name="chat_msg" id='msg_content' placeholder="Enter message here"/>
+	<input type="submit" name="submit" value="submit"/>
+	</form>
+</template>
+
+<template name='messages'>
+	{{#each messages}}
+	<div>{{timestamp}} {{content}} </div>
+	{{/each}}
+</template>
