@@ -1,7 +1,7 @@
 /**
  * Chats is the collection of all chat messages. Object has the structure
  * {
- *      roomId: <String>,
+ *      roomName: <String>,
  *      messages: [{
             timestamp: Date,
             content: String
@@ -14,16 +14,14 @@ if (Meteor.isClient) {
         Session.set('room_id', null)
         Meteor.autorun(function() {
             Meteor.subscribe('room-messages', Session.get('room_id'));
+            Meteor.subscribe('room-ids');
         });
     });
     Template.messages.roomMessages = function() {
-        return Chats.find({}, {
-            sort: {
-                messages: {
-                    timestamp: -1
-                }
-            }
-        })
+        return Chats.find({_id: Session.get('room_id')})
+    }
+    Template.rooms.rooms = function(){
+        return Chats.find({}, {messages: -1});
     }
     Template.form.events({
         'click #submit': function(evt) {
@@ -82,6 +80,9 @@ if (Meteor.isServer) {
                     _id: roomId
                 })
             }
+        });
+        Meteor.publish("room-ids", function(){            
+            return Chats.find({}, {messages: -1});
         });
     });
 }

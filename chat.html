@@ -3,7 +3,9 @@
 </head>
 
 <body>
-    {{> hello}}
+    <div>
+        {{>rooms}}
+    </div>
     <div>
         {{> form }}
     </div>
@@ -12,10 +14,14 @@
     </div>
 </body>
 
-<template name="hello">
-    <h1>This is my first Meteor Application!</h1>
+<template name="rooms">
+    <h1>Room List</h1>
+    <ul>
+    {{#each rooms}}    
+    <li><a href="#" id='{{_id}}'>{{_id}}</a></li>
+    {{/each}}
+    </ul>
 </template>
-
 <template name="form">
     <input type="text" id='room_id' placeholder="Enter room id here" />
     <input type="text" id='msg_content' placeholder="Enter message here" />
