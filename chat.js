@@ -12,25 +12,18 @@ Chats = new Meteor.Collection('chats');
 if (Meteor.isClient) {
     Meteor.startup(function() {
         Session.set('room_id', null)
+        Meteor.autorun(function() {
+            Meteor.subscribe('room-messages', Session.get('room_id'));
+        });
     });
     Template.messages.roomMessages = function() {
-        var roomId = Session.get('room_id');
-        return Chats.find({
-            roomId: roomId
-        }, {
+        return Chats.find({}, {
             sort: {
                 messages: {
                     timestamp: -1
                 }
             }
         })
-        // return Chats.find({
-        //     roomId: roomId
-        // }, {
-        //     sort: {
-        //         timestamp: -1
-        //     }
-        // });
     }
     Template.form.events({
         'click #submit': function(evt) {
@@ -46,36 +39,30 @@ if (Meteor.isClient) {
             }
             //room id is null, then create a new room 
             if (!roomId) {
-                console.log("Room id is null, create a new room")
-                roomId = Random.id();
-                Chats.insert({
-                    roomId: roomId,
+                console.log("Room id is null, create a new room")                
+                var newRoom = Chats.insert({                    
                     messages: [{
                         timestamp: new Date(),
                         content: message
                     }]
                 })
-                roomIdElem.val(roomId);
-                Session.set('room_id', roomId);
+                console.log(newRoom);
+                roomIdElem.val(newRoom);
+                Session.set('room_id', newRoom);
             } else { //room Id is presented, join the chat room
-                var room = Chats.findOne({
-                    roomId: roomId
-                })
-                if (room) {
-                    console.log('pushing a new message')
-                    Session.set('room_id', roomId);
-                    Chats.update({
-                        _id: room._id
-                    }, {
-                        '$push': {
-                            messages: {
-                                timestamp: new Date(),
-                                content: message
-                            }
+                console.log('pushing a new message')
+                Session.set('room_id', roomId);
+                Chats.update({
+                    _id : roomId
+                }, {
+                    '$push': {
+                        messages: {
+                            timestamp: new Date(),
+                            content: message
                         }
+                    }
 
-                    })
-                }
+                })
             }
             //clear the chat box
             msgElem.val('')
@@ -87,5 +74,14 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
     Meteor.startup(function() {
         // code to run on server at startup
+        Meteor.publish("room-messages", function(roomId) {
+            if (!roomId) {
+                return null;
+            } else {
+                return Chats.find({
+                    _id: roomId
+                })
+            }
+        });
     });
 }
