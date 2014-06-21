@@ -23,7 +23,16 @@ if (Meteor.isClient) {
     Template.rooms.rooms = function(){
         return Chats.find({}, {messages: -1});
     }
-    Template.form.events({
+    Template.rooms.events({
+        'click .room_removal': function(evt){
+            console.log("Room removal clicked, id "+evt.target.value);            
+            var roomId = evt.target.value;
+            Chats.remove({
+                _id: roomId
+            })
+        }, 
+    });
+    Template.form.events({       
         'click #submit': function(evt) {
             console.log(evt);
             console.log('submit button clicked')

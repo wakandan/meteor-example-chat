@@ -18,9 +18,12 @@
     <h1>Room List</h1>
     <ul>
     {{#each rooms}}    
-    <li><a href="#" id='{{_id}}'>{{_id}}</a></li>
+    <li>
+        <a href="#" id='{{_id}}'>{{_id}}</a>
+        <button class='room_removal' value='{{_id}}'>X</button>
+    </li>
     {{/each}}
-    </ul>
+    </ul> 
 </template>
 <template name="form">
     <input type="text" id='room_id' placeholder="Enter room id here" />
